@@ -52,3 +52,11 @@ def monitorar_comunicacao(comunicacao_atual):
         return 'CRÍTICO'
     else:
         return 'ATENÇÂO'
+
+def monitorar_bateria(bateria_atual):
+    if bateria_atual > 59:
+        return 'NORMAL'
+    elif bateria_atual < 30:
+        return 'CRÍTICO'    
+    else:
+        return 'ATENÇÂO'
