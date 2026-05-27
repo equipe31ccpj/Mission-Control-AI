@@ -68,3 +68,11 @@ def monitorar_oxigenio(oxigenio_atual):
         return 'CRÍTICO'
     else:
         return 'ATENÇÂO'
+        
+def monitorar_estabilidade(estabilidade_atual):
+    if estabilidade_atual > 74:
+        return 'NORMAL'
+    elif estabilidade_atual < 50:
+        return 'CRÍTICO'
+    else:
+        return 'ATENÇÂO'
