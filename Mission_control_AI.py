@@ -44,3 +44,11 @@ def monitorar_temp(temp_atual):
         return 'NORMAL'
     else:
         return 'ATENÇÂO'
+    
+def monitorar_comunicacao(comunicacao_atual):
+    if comunicacao_atual > 69:
+        return 'NORMAL'
+    elif comunicacao_atual < 35:
+        return 'CRÍTICO'
+    else:
+        return 'ATENÇÂO'
