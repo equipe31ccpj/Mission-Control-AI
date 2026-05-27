@@ -36,3 +36,11 @@ areas_monitoradas = [
     "Suporte de oxigênio",
     "Estabilidade operacional"
 ]
+
+def monitorar_temp(temp_atual):
+    if temp_atual > 32 or temp_atual < 10:
+        return 'CRÍTICO'
+    elif 18 <= temp_atual <= 26:
+        return 'NORMAL'
+    else:
+        return 'ATENÇÂO'
