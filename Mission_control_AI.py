@@ -60,3 +60,11 @@ def monitorar_bateria(bateria_atual):
         return 'CRÍTICO'    
     else:
         return 'ATENÇÂO'
+    
+def monitorar_oxigenio(oxigenio_atual):
+    if oxigenio_atual > 79:
+        return 'NORMAL'
+    elif oxigenio_atual < 40:
+        return 'CRÍTICO'
+    else:
+        return 'ATENÇÂO'
