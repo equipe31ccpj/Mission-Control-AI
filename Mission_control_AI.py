@@ -39,40 +39,64 @@ areas_monitoradas = [
 
 def monitorar_temp(temp_atual):
     if temp_atual > 32 or temp_atual < 10:
-        return 'CRÍTICO'
+        return 'CRÍTICO', 2
     elif 18 <= temp_atual <= 26:
-        return 'NORMAL'
+        return 'NORMAL', 0
     else:
-        return 'ATENÇÂO'
+        return 'ATENÇÂO', 1
     
 def monitorar_comunicacao(comunicacao_atual):
     if comunicacao_atual > 69:
-        return 'NORMAL'
+        return 'NORMAL', 0
     elif comunicacao_atual < 35:
-        return 'CRÍTICO'
+        return 'CRÍTICO', 2
     else:
-        return 'ATENÇÂO'
+        return 'ATENÇÂO', 1
 
 def monitorar_bateria(bateria_atual):
     if bateria_atual > 59:
-        return 'NORMAL'
+        return 'NORMAL', 0
     elif bateria_atual < 30:
-        return 'CRÍTICO'    
+        return 'CRÍTICO', 2   
     else:
-        return 'ATENÇÂO'
+        return 'ATENÇÂO', 1
     
 def monitorar_oxigenio(oxigenio_atual):
     if oxigenio_atual > 79:
-        return 'NORMAL'
+        return 'NORMAL', 0
     elif oxigenio_atual < 40:
-        return 'CRÍTICO'
+        return 'CRÍTICO', 2
     else:
-        return 'ATENÇÂO'
+        return 'ATENÇÂO', 1
         
 def monitorar_estabilidade(estabilidade_atual):
     if estabilidade_atual > 74:
-        return 'NORMAL'
+        return 'NORMAL', 0
     elif estabilidade_atual < 50:
-        return 'CRÍTICO'
+        return 'CRÍTICO', 2
     else:
-        return 'ATENÇÂO'
+        return 'ATENÇÂO', 1
+
+classificacoes_dados_ciclos = []
+pontos_dados_ciclos = []
+pontos_ciclos = []
+classificacao_ciclos = [] 
+for ciclo in dados_missao:
+    status_temp, pontos_temp = monitorar_temp(ciclo[0])
+    status_comunicacao, pontos_comunicacao = monitorar_comunicacao(ciclo[1])
+    status_bateria, pontos_bateria = monitorar_bateria(ciclo[2])
+    status_oxigenio, pontos_oxigenio = monitorar_oxigenio(ciclo[3])
+    status_estabilidade, pontos_estabilidade = monitorar_estabilidade(ciclo[4])
+    pontuacao_ciclo = pontos_temp + pontos_comunicacao + pontos_bateria + pontos_oxigenio + pontos_estabilidade 
+    if pontuacao_ciclo >= 6:
+        classificacao_ciclo = 'MISSÃO CRÍTICA'
+    elif pontuacao_ciclo <= 2:
+        classificacao_ciclo = 'MISSÃO ESTÁVEL'
+    else:
+        classificacao_ciclo = 'MISSÃO EM ATENÇÃO'
+
+    classificacoes_dados_ciclos.append([status_temp, status_comunicacao, status_bateria, status_oxigenio, status_estabilidade])
+    pontos_dados_ciclos.append([pontos_temp, pontos_comunicacao, pontos_bateria, pontos_oxigenio, pontos_estabilidade])
+    pontos_ciclos.append(pontuacao_ciclo)
+    classificacao_ciclos.append(classificacao_ciclo)
+
