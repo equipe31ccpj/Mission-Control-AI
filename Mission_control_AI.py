@@ -107,3 +107,42 @@ def tendencia_missao(pontos_ciclos):
         return 'A missão apresentou tendência de melhora.'
     else:
         return 'A missão permaneceu estável em relação ao início.'
+
+def identificar_area_mais_afetada(pontos_dados_ciclos):
+    pontos_total_temp = 0
+    pontos_total_comunicacao = 0
+    pontos_total_bateria = 0
+    pontos_total_oxigenio = 0
+    pontos_total_estabilidade = 0
+
+    for dado in pontos_dados_ciclos:
+        pontos_total_temp += dado[0]
+        pontos_total_comunicacao += dado[1]
+        pontos_total_bateria += dado[2]
+        pontos_total_oxigenio += dado[3]
+        pontos_total_estabilidade += dado[4]
+    
+    mapeamento_areas = {
+        "Temperatura interna": pontos_total_temp,
+        "Comunicação com a base": pontos_total_comunicacao,
+        "Sistema de energia": pontos_total_bateria,
+        "Suporte de oxigênio": pontos_total_oxigenio,
+        "Estabilidade operacional": pontos_total_estabilidade
+    }
+
+    area_mais_afetada = max(mapeamento_areas, key=mapeamento_areas.get)
+    maior_valor = mapeamento_areas[area_mais_afetada]
+
+    match area_mais_afetada:
+        case "Temperatura interna":
+            recomendacao_automatica = 'Ativar radiadores suplementares e reorientar defletores térmicos contra irradiação.'
+        case "Comunicação com a base":
+            recomendacao_automatica = 'Iniciar varredura de frequência de backup e realinhar antena de alto ganho com a DSN.'
+        case "Sistema de energia":
+            recomendacao_automatica = 'Modo de Sobrevivência Ativo: Desligar subsistemas científicos e priorizar aquecedores de bateria.'
+        case "Suporte de oxigênio":
+            recomendacao_automatica = 'Isolar vazamentos nas linhas de pressurização e acionar tanques criogênicos de reserva.'
+        case "Estabilidade operacional":
+            recomendacao_automatica = 'Interromper perfuração mecânica e calibrar giroscópios do sistema de atitude (RCS).'
+    
+    return area_mais_afetada, maior_valor, recomendacao_automatica
