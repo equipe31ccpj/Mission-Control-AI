@@ -100,3 +100,10 @@ for ciclo in dados_missao:
     pontos_ciclos.append(pontuacao_ciclo)
     classificacao_ciclos.append(classificacao_ciclo)
 
+def tendencia_missao(pontos_ciclos):
+    if pontos_ciclos[0] > pontos_ciclos[-1]:
+        return 'A missão apresentou tendência de piora.'
+    elif pontos_ciclos[0] < pontos_ciclos[-1]:
+        return 'A missão apresentou tendência de melhora.'
+    else:
+        return 'A missão permaneceu estável em relação ao início.'
