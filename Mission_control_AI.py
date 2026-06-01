@@ -1,18 +1,3 @@
-# Monitoramento de Missão: 16 Psyche (Coração Metálico)
-# Ciclo 1 — Lançamento Interplanetário
-# Ciclo 2 — Assistência Gravitacional de Marte
-# Ciclo 3 — Cruzeiro Profundo e Teste Óptico
-# Ciclo 4 — Chegada e Captura Órbita A
-# Ciclo 5 — Descida para Órbita B
-# Ciclo 6 — Lançamento de Microssondas de Impacto
-# Ciclo 7 — Preparação para o Pouso Experimental
-# Ciclo 8 — Descida Autônoma de Baixa Altitude
-# Ciclo 9 — Fixação Magnética/Mecânica
-# Ciclo 10 — Análise Direta in loco
-# Ciclo 11 — Curto-circuito (Alta temp, drena energia, afeta oxigênio e estabilidade)
-# Ciclo 12 — Isolamento da falha e acionamento dos sistemas de backup
-# Ciclo 13 — Ativação da Estação Permanente 
-
 dados_missao = [
     [22, 98, 100, 100, 100], 
     [25, 95, 100, 100,  98],  
@@ -37,13 +22,57 @@ areas_monitoradas = [
     "Estabilidade operacional"
 ]
 
+fases_missao = [
+    "Lançamento Interplanetário",
+    "Assistência Gravitacional de Marte",
+    "Cruzeiro Profundo e Teste Óptico",
+    "Chegada e Captura Órbita A",
+    "Descida para Órbita B",
+    "Lançamento de Microssondas de Impacto",
+    "Preparação para o Pouso Experimental",
+    "Descida Autônoma de Baixa Altitude",
+    "Fixação Magnética/Mecânica",
+    "Análise Direta in loco",
+    "Curto-circuito (Alta temp, drena energia, afeta oxigênio e estabilidade)",
+    "Isolamento da falha e acionamento dos sistemas de backup",
+    "Ativação da Estação Permanente"
+]
+
+classificacoes_dados_ciclos = []
+pontos_dados_ciclos = []
+pontos_ciclos = []
+classificacao_ciclos = [] 
+pontos_total_temp = 0
+pontos_total_comunicacao = 0
+pontos_total_bateria = 0
+pontos_total_oxigenio = 0
+pontos_total_estabilidade = 0
+area_mais_afetada = ""
+recomendacao_automatica = ""
+ciclo_mais_critico = -1
+maior_pontuacao = -1
+risco_medio = 0
+qnt_ciclos_criticos = 0
+classificacao_missao = ""
+cont = len(dados_missao)
+soma_temp = sum(i[0] for i in dados_missao)
+soma_comunicacao = sum(i[1] for i in dados_missao)
+soma_bateria = sum(i[2] for i in dados_missao)
+soma_oxigenio = sum(i[3] for i in dados_missao)
+soma_estabilidade = sum(i[4] for i in dados_missao)
+media_temp = soma_temp / cont
+media_comunicacao = soma_comunicacao / cont
+media_bateria = soma_bateria / cont
+media_oxigenio = soma_oxigenio / cont
+media_estabilidade = soma_estabilidade / cont
+
 def monitorar_temp(temp_atual):
     if temp_atual > 32 or temp_atual < 10:
         return 'CRÍTICO', 2
     elif 18 <= temp_atual <= 26:
         return 'NORMAL', 0
     else:
-        return 'ATENÇÂO', 1
+        return 'ATENÇÃO', 1
     
 def monitorar_comunicacao(comunicacao_atual):
     if comunicacao_atual > 69:
@@ -51,7 +80,7 @@ def monitorar_comunicacao(comunicacao_atual):
     elif comunicacao_atual < 35:
         return 'CRÍTICO', 2
     else:
-        return 'ATENÇÂO', 1
+        return 'ATENÇÃO', 1
 
 def monitorar_bateria(bateria_atual):
     if bateria_atual > 59:
@@ -59,7 +88,7 @@ def monitorar_bateria(bateria_atual):
     elif bateria_atual < 30:
         return 'CRÍTICO', 2   
     else:
-        return 'ATENÇÂO', 1
+        return 'ATENÇÃO', 1
     
 def monitorar_oxigenio(oxigenio_atual):
     if oxigenio_atual > 79:
@@ -67,7 +96,7 @@ def monitorar_oxigenio(oxigenio_atual):
     elif oxigenio_atual < 40:
         return 'CRÍTICO', 2
     else:
-        return 'ATENÇÂO', 1
+        return 'ATENÇÃO', 1
         
 def monitorar_estabilidade(estabilidade_atual):
     if estabilidade_atual > 74:
@@ -75,46 +104,44 @@ def monitorar_estabilidade(estabilidade_atual):
     elif estabilidade_atual < 50:
         return 'CRÍTICO', 2
     else:
-        return 'ATENÇÂO', 1
+        return 'ATENÇÃO', 1
 
-classificacoes_dados_ciclos = []
-pontos_dados_ciclos = []
-pontos_ciclos = []
-classificacao_ciclos = [] 
-for ciclo in dados_missao:
-    status_temp, pontos_temp = monitorar_temp(ciclo[0])
-    status_comunicacao, pontos_comunicacao = monitorar_comunicacao(ciclo[1])
-    status_bateria, pontos_bateria = monitorar_bateria(ciclo[2])
-    status_oxigenio, pontos_oxigenio = monitorar_oxigenio(ciclo[3])
-    status_estabilidade, pontos_estabilidade = monitorar_estabilidade(ciclo[4])
-    pontuacao_ciclo = pontos_temp + pontos_comunicacao + pontos_bateria + pontos_oxigenio + pontos_estabilidade 
-    if pontuacao_ciclo >= 6:
-        classificacao_ciclo = 'MISSÃO CRÍTICA'
-    elif pontuacao_ciclo <= 2:
-        classificacao_ciclo = 'MISSÃO ESTÁVEL'
-    else:
-        classificacao_ciclo = 'MISSÃO EM ATENÇÃO'
+def classificar_e_pontuar_ciclo():
+    for ciclo in dados_missao:
+        status_temp, pontos_temp = monitorar_temp(ciclo[0])
+        status_comunicacao, pontos_comunicacao = monitorar_comunicacao(ciclo[1])
+        status_bateria, pontos_bateria = monitorar_bateria(ciclo[2])
+        status_oxigenio, pontos_oxigenio = monitorar_oxigenio(ciclo[3])
+        status_estabilidade, pontos_estabilidade = monitorar_estabilidade(ciclo[4])
+        
+        pontuacao_ciclo = pontos_temp + pontos_comunicacao + pontos_bateria + pontos_oxigenio + pontos_estabilidade 
+        
+        if pontuacao_ciclo >= 6:
+            classificacao_ciclo = 'MISSÃO CRÍTICA'
+        elif pontuacao_ciclo <= 2:
+            classificacao_ciclo = 'MISSÃO ESTÁVEL'
+        else:
+            classificacao_ciclo = 'MISSÃO EM ATENÇÃO'
 
-    classificacoes_dados_ciclos.append([status_temp, status_comunicacao, status_bateria, status_oxigenio, status_estabilidade])
-    pontos_dados_ciclos.append([pontos_temp, pontos_comunicacao, pontos_bateria, pontos_oxigenio, pontos_estabilidade])
-    pontos_ciclos.append(pontuacao_ciclo)
-    classificacao_ciclos.append(classificacao_ciclo)
+        classificacoes_dados_ciclos.append([status_temp, status_comunicacao, status_bateria, status_oxigenio, status_estabilidade])
+        pontos_dados_ciclos.append([pontos_temp, pontos_comunicacao, pontos_bateria, pontos_oxigenio, pontos_estabilidade])
+        pontos_ciclos.append(pontuacao_ciclo)
+        classificacao_ciclos.append(classificacao_ciclo)
+        
+    return classificacoes_dados_ciclos, pontos_dados_ciclos, pontos_ciclos, classificacao_ciclos
 
-def tendencia_missao(pontos_ciclos):
+def tendencia_missao():
     if pontos_ciclos[0] > pontos_ciclos[-1]:
-        return 'A missão apresentou tendência de piora.'
+        return 'A missão apresentou tendência de melhora (risco inicial maior que o final).'
     elif pontos_ciclos[0] < pontos_ciclos[-1]:
-        return 'A missão apresentou tendência de melhora.'
+        return 'A missão apresentou tendência de piora (risco final maior que o inicial).'
     else:
         return 'A missão permaneceu estável em relação ao início.'
 
-def identificar_area_mais_afetada(pontos_dados_ciclos):
-    pontos_total_temp = 0
-    pontos_total_comunicacao = 0
-    pontos_total_bateria = 0
-    pontos_total_oxigenio = 0
-    pontos_total_estabilidade = 0
-
+def identificar_area_mais_afetada():
+    global pontos_total_temp, pontos_total_comunicacao, pontos_total_bateria, pontos_total_oxigenio, pontos_total_estabilidade
+    global area_mais_afetada, recomendacao_automatica
+    
     for dado in pontos_dados_ciclos:
         pontos_total_temp += dado[0]
         pontos_total_comunicacao += dado[1]
@@ -145,129 +172,98 @@ def identificar_area_mais_afetada(pontos_dados_ciclos):
         case 'Estabilidade operacional':
             recomendacao_automatica = 'Interromper perfuração mecânica e calibrar giroscópios do sistema de atitude (RCS).'
     
-    return area_mais_afetada, maior_valor, recomendacao_automatica, pontos_total_temp, pontos_total_comunicacao, pontos_bateria, pontos_total_oxigenio, pontos_total_estabilidade
+    return area_mais_afetada, maior_valor, recomendacao_automatica
 
-fases_missao = [
-    "Lançamento Interplanetário",
-    "Assistência Gravitacional de Marte",
-    "Cruzeiro Profundo e Teste Óptico",
-    "Chegada e Captura Órbita A",
-    "Descida para Órbita B",
-    "Lançamento de Microssondas de Impacto",
-    "Preparação para o Pouso Experimental",
-    "Descida Autônoma de Baixa Altitude",
-    "Fixação Magnética/Mecânica",
-    "Análise Direta in loco",
-    "Curto-circuito (Alta temp, drena energia, afeta oxigênio e estabilidade)",
-    "Isolamento da falha e acionamento dos sistemas de backup",
-    "Ativação da Estação Permanente"
-]
-
-ciclo_mais_critico = -1
-maior_pontuacao = 0
 def identificar_ciclo_mais_critico():
-    for ciclo in pontos_ciclos:    
-        if pontos_ciclos[ciclo] > ciclo_mais_critico:
-            ciclo_mais_critico = ciclo
-            maior_pontuacao = pontos_ciclos[ciclo]
-        else:
-            continue
-    return ciclo_mais_critico, maior_pontuacao
+    global ciclo_mais_critico, maior_pontuacao
+    for idx, pontuacao in enumerate(pontos_ciclos):    
+        if pontuacao > maior_pontuacao:
+            ciclo_mais_critico = idx + 1
+            maior_pontuacao = pontuacao
 
-risco_medio = 0
-soma_pontos_ciclos = 0
 def calcular_risco_medio():
-    for ciclo in pontos_ciclos:
-        soma_pontos_ciclos += pontos_ciclos[ciclo]
+    global risco_medio
+    soma_pontos_ciclos = sum(pontos_ciclos)
     risco_medio = soma_pontos_ciclos / len(pontos_ciclos)
     return risco_medio
 
-qnt_ciclos_criticos = 0
-qnt_ciclos_atencao = 0
-qnt_ciclos_normal = 0
 def calcular_qnt_ciclos_criticos():
-    for ciclo in classificacao_ciclos:
-        if classificacao_ciclos[ciclo] == 'MISSÃO CRÍTICA':
+    global qnt_ciclos_criticos, classificacao_missao
+    qnt_ciclos_atencao = 0
+    qnt_ciclos_normal = 0
+    
+    for status in classificacao_ciclos:
+        if status == 'MISSÃO CRÍTICA':
             qnt_ciclos_criticos += 1
-        elif classificacao_ciclos[ciclo] == 'MISSÃO ESTÁVEL':
-            qnt_ciclos_atencao += 1
-        else:
+        elif status == 'MISSÃO ESTÁVEL':
             qnt_ciclos_normal += 1
+        else:
+            qnt_ciclos_atencao += 1
         
     if qnt_ciclos_normal > qnt_ciclos_atencao and qnt_ciclos_normal > qnt_ciclos_criticos:
-        classificacao_missao = 'MISSÃO NORMAL'
+        classificacao_missao = 'MISSÃO NORMAL/ESTÁVEL'
     elif qnt_ciclos_atencao > qnt_ciclos_normal and qnt_ciclos_atencao > qnt_ciclos_criticos:
-        classificacao_missao = 'MISSÃO ESTÁVEL'
+        classificacao_missao = 'MISSÃO EM ATENÇÃO'
     else:
         classificacao_missao = 'MISSÃO CRÍTICA'
 
     return qnt_ciclos_criticos, classificacao_missao
 
-cont = 0
-media_temp = 0
-media_comunicacao = 0
-media_bateria = 0
-media_oxigenio = 0
-media_estabilidade = 0
-soma_temp = 0
-soma_comunicacao = 0
-soma_bateria = 0
-soma_oxigenio = 0
-soma_estabilidade = 0
-for i in dados_missao:
-    soma_temp += i[0]
-    soma_comunicacao += i[1]
-    soma_bateria += i[2]
-    soma_oxigenio += i[3]
-    soma_estabilidade += i[4]
-    cont += 1
-
-media_temp = soma_temp / cont
-media_comunicacao = soma_comunicacao / cont
-media_bateria = soma_bateria / cont
-media_oxigenio = soma_oxigenio / cont
-media_estabilidade = soma_estabilidade / cont
-
 def relatorio_final():
-    print(f'{'='}*20')
-    print('𝗠𝗜𝗦𝗦𝗜𝗢𝗡 𝗖𝗢𝗡𝗧𝗥𝗢𝗟 𝗔𝗜')
-    print(f'{'='}*20')
+    print('='*40)
+    print('         𝗠𝗜𝗦𝗦𝗜𝗢𝗡 𝗖𝗢𝗡𝗧𝗥𝗢𝗟 𝗔𝗜')
+    print('='*40)
     print('Missão: Core Horizon X')
     print('Equipe: Equipe PAD Dynamics')
-    print('Quantidade de cilos analisados: 13')
-    print(f'{'='}*20\n')
+    print('Quantidade de ciclos analisados: 13')
+    print('='*40 + '\n')
+    
     for i in range(len(dados_missao)):
-        print(f'\nCICLO {i + 1} — {fases_missao[i]}')
+        print(f'CICLO {i + 1} — {fases_missao[i]}')
         print('-' * 40)
-        print(f'Temperatura:  {dados_missao[i][0]}°C | {classificacao_ciclos[i][0]} | {pontos_dados_ciclos[i][0]} pts')
-        print(f'Comunicação:  {dados_missao[i][1]}%  | {classificacao_ciclos[i][1]} | {pontos_dados_ciclos[i][1]} pts')
-        print(f'Bateria:      {dados_missao[i][2]}%  | {classificacao_ciclos[i][2]} | {pontos_dados_ciclos[i][2]} pts')
-        print(f'Oxigênio:     {dados_missao[i][3]}%  | {classificacao_ciclos[i][3]} | {pontos_dados_ciclos[i][3]} pts')
-        print(f'Estabilidade: {dados_missao[i][4]}%  | {classificacao_ciclos[i][4]} | {pontos_dados_ciclos[i][4]} pts')
+        print(f'Temperatura:  {dados_missao[i][0]}°C | {classificacoes_dados_ciclos[i][0]:<8} | {pontos_dados_ciclos[i][0]} pts')
+        print(f'Comunicação:  {dados_missao[i][1]}%  | {classificacoes_dados_ciclos[i][1]:<8} | {pontos_dados_ciclos[i][1]} pts')
+        print(f'Bateria:      {dados_missao[i][2]}%  | {classificacoes_dados_ciclos[i][2]:<8} | {pontos_dados_ciclos[i][2]} pts')
+        print(f'Oxigênio:     {dados_missao[i][3]}%  | {classificacoes_dados_ciclos[i][3]:<8} | {pontos_dados_ciclos[i][3]} pts')
+        print(f'Estabilidade: {dados_missao[i][4]}%  | {classificacoes_dados_ciclos[i][4]:<8} | {pontos_dados_ciclos[i][4]} pts')
         print(f'PONTUAÇÃO TOTAL DO CICLO: {pontos_ciclos[i]} pontos')
         print(f'CLASSIFICAÇÃO TOTAL DO CICLO: {classificacao_ciclos[i]}')
-    print('=' * 40)
-    print('RELATORIO FINAL DA MISSÃO')
+        print('\n' + '-' * 40)
+        
+    print('\n' + '=' * 40)
+    print('           RELATÓRIO FINAL DA MISSÃO')
     print('=' * 40)
     print('Missão: Core Horizon X')
     print('Equipe: Equipe PAD Dynamics')
-    print('Quantidade de cilos analisados: 13\n')
+    print('Quantidade de ciclos analisados: 13\n')
     print(f'Média de Temperatura:  {media_temp:.2f}°C')
-    print(f'Média de Comunicação:  {media_temp:.2f}%')
-    print(f'Média de Bateria:      {media_temp:.2f}%')
-    print(f'Média de Oxigênio:     {media_temp:.2f}%')
-    print(f'Média de Estabilidade: {media_temp:.2f}%\n')
-    print(f'Ciclo mais crítico: {ciclo_mais_critico}')
+    print(f'Média de Comunicação:  {media_comunicacao:.2f}%')
+    print(f'Média de Bateria:      {media_bateria:.2f}%')
+    print(f'Média de Oxigênio:     {media_oxigenio:.2f}%')
+    print(f'Média de Estabilidade: {media_estabilidade:.2f}%\n')
+    print(f'Ciclo mais crítico: {ciclo_mais_critico} ({fases_missao[ciclo_mais_critico-1]})')
     print(f'Maior pontuação de risco: {maior_pontuacao}')
-    print(f'Risco Médio da missão: {risco_medio}')
+    print(f'Risco Médio da missão: {risco_medio:.2f}')
     print(f'Quantidade de ciclos críticos: {qnt_ciclos_criticos}\n')
-    print(f'Tendência de missão: {tendencia_missao(pontos_ciclos)} \n')
+    print(f'Tendência de missão: {tendencia_missao()} \n')
     print('Pontuação acumulada por área: ')
-    print(f'Temperatura interna->  {pontos_total_temp}')
-    print(f'Comunicação com a base-> {pontos_total_comunicacao}')
-    print(f'Sistema de energia-> {pontos_total_bateria}')
-    print(f'Suporte de oxigênio-> {pontos_total_oxigenio}')
-    print(f'Estabilidade operaional-> {pontos_total_estabilidade}\n')
-    print(f'Área mais afetada: {area_mais_afetada}\n')
-    print(f'CLassificação final da missão: {classificacao_missao}')
+    print(f'  - Temperatura interna ----> {pontos_total_temp} pts')
+    print(f'  - Comunicação com a base -> {pontos_total_comunicacao} pts')
+    print(f'  - Sistema de energia ------> {pontos_total_bateria} pts')
+    print(f'  - Suporte de oxigênio ----> {pontos_total_oxigenio} pts')
+    print(f'  - Estabilidade operacional -> {pontos_total_estabilidade} pts\n')
+    print(f'Área mais afetada: {area_mais_afetada}')
+    print(f'Recomendação: {recomendacao_automatica}\n')
+    print(f'Classificação final da missão: {classificacao_missao}')
     print('=' * 40)    
+
+def main():
+    classificar_e_pontuar_ciclo()
+    identificar_area_mais_afetada()
+    identificar_ciclo_mais_critico()
+    calcular_risco_medio()
+    calcular_qnt_ciclos_criticos()
+    relatorio_final()
+
+if __name__ == '__main__':
+    main()
